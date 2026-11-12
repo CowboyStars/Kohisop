@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 
 public class KohisopVIKS {
@@ -33,12 +32,18 @@ public class KohisopVIKS {
             System.out.print("\nMasukkan mata uang (IDR, USD, JPY, MYR, EUR): ");
             mataUang = sc.nextLine();
 
-            if (mataUang.equalsIgnoreCase("IDR") == true || mataUang.equalsIgnoreCase("USD") == true ||
-                mataUang.equalsIgnoreCase("JPY") == true || mataUang.equalsIgnoreCase("MYR") == true ||
-                mataUang.equalsIgnoreCase("EUR") == true) {
+            if (mataUang.equalsIgnoreCase("IDR") == true) {
+                break;
+            } else if(mataUang.equalsIgnoreCase("USD") == true) {
+                break;
+            } else if(mataUang.equalsIgnoreCase("JPY") == true) {
+                break;
+            } else if(mataUang.equalsIgnoreCase("MYR") == true) {
+                break;
+            } else if(mataUang.equalsIgnoreCase("EUR") == true) {
                 break;
             } else {
-                System.out.println("Mata uang tidak valid!");
+                System.out.println("Mata uang tidak Valid!");
             }
         }
         DetailPajak(kode, jumlah, mataUang);
@@ -47,11 +52,11 @@ public class KohisopVIKS {
     }
 
     static void Menu() {
-        System.out.println("DAFTAR MENU KOHISOP");
-        System.out.printf("%-6s %-38s %-10s\n", "Kode", "Menu Minuman", "Harga (Rp)");
+        System.out.println("------------------DAFTAR MENU KOHISOP------------------");
+        System.out.printf("%-6s %-36s %-10s\n", "Kode", "Menu Minuman", "Harga (Rp)");
 
         for (int i = 0; i < menu.length; i++) {
-            System.out.printf("%-6s %-38s %d\n", menu[i][0], menu[i][1], hargaMenu[i]);
+            System.out.printf("%-6s %-40s %d\n", menu[i][0], menu[i][1], hargaMenu[i]);
         }
     }
 
@@ -74,7 +79,7 @@ public class KohisopVIKS {
 
             int inputJumlah;
             while (true) {
-                System.out.print("Masukkan jumlah (1-3 atau 0 untuk selesai): ");
+                System.out.print("Masukkan jumlah (1-3 atau 0/s untuk selesai): ");
 
                 if (sc.hasNextInt() == true) {
                     inputJumlah = sc.nextInt();
@@ -96,7 +101,8 @@ public class KohisopVIKS {
             }
 
             if (inputJumlah == 0) {
-                break;
+                System.out.println("Pesanan dibatalkan!");
+                continue;
             }
 
             kode[pesananKe] = inputKode.toUpperCase();
@@ -145,9 +151,13 @@ public class KohisopVIKS {
     }
 
     static void Detail(String[] kode, int[] jumlah) {
-        int totalTanpaPajak = 0;
-        System.out.println("\nDETAIL PESANAN");
-        System.out.printf("%-6s %-38s %-8s %-10s\n", "Kode", "Minuman", "Jumlah", "Harga Total");
+        double totalTanpaPajak = 0;
+        double totalDenganPajak = 0;
+
+        System.out.println("\n================================================");
+        System.out.println("                    KOHISOP");
+        System.out.println("                STRUK PEMESANAN");
+        System.out.println("================================================");
 
         for (int i = 0; i < 5; i++) {
             if (jumlah[i] > 0) {
@@ -157,13 +167,35 @@ public class KohisopVIKS {
                 int harga = hargaMenu[idx];
 
                 int totalJenis = harga * jumlah[i];
+                double nilaiPajak = hitungPajak(harga, jumlah[i]);
+
+                int persen = 0;
+                if (harga < 50) {
+                    persen = 0;
+                } else if (harga <= 55) {
+                    persen = 8;
+                } else {
+                    persen = 11;
+                }
 
                 totalTanpaPajak = totalTanpaPajak + totalJenis;
+                totalDenganPajak = totalDenganPajak + totalJenis + nilaiPajak;
 
-                System.out.printf("%-6s %-38s %-8d Rp%d.000\n", kode[i], nama, jumlah[i], totalJenis);
+                String kiri1 = "    " + jumlah[i] + " x Rp" + String.format("%.2f", (double) harga);
+                String kanan1 = "Rp" + String.format("%.2f", (double) totalJenis);
+                String kiri2 = "    Pajak " + persen + "%";
+                String kanan2 = "Rp" + String.format("%.2f", nilaiPajak);
+
+                System.out.println(kode[i] + "   " + nama);
+                System.out.printf("%-28s%20s\n", kiri1, kanan1);
+                System.out.printf("%-28s%20s\n", kiri2, kanan2);
             }
         }
-        System.out.println("Total Keseluruhan (Tanpa Pajak): Rp" + totalTanpaPajak + ".000");
+
+        System.out.println("------------------------------------------------");
+        System.out.printf("%-28s%20s\n", "Total Tanpa Pajak", "Rp" + String.format("%.2f", totalTanpaPajak));
+        System.out.printf("%-28s%20s\n", "Total Dengan Pajak", "Rp" + String.format("%.2f", totalDenganPajak));
+        System.out.println("------------------------------------------------");
     }
 
     static double hitungPajak(int harga, int jumlah) {
@@ -173,9 +205,9 @@ public class KohisopVIKS {
         if (harga < 50) {
             totalPajak = 0;
         } else if (harga <= 55) {
-            totalPajak = (totalHarga * 8) / 100;
+            totalPajak = (totalHarga * 8) / 100.0;
         } else {
-            totalPajak = (totalHarga * 11) / 100;
+            totalPajak = (totalHarga * 11) / 100.0;
         }
         return totalPajak;
     }
@@ -200,14 +232,10 @@ public class KohisopVIKS {
     static void DetailPajak(String[] kode, int[] jumlah, String mataUang) {
         double totalIDR = 0;
 
-        System.out.println("\nDETAIL PESANAN DAN PAJAK");
-        System.out.printf("%-6s %-38s %-8s %-8s %-12s\n", "Kode", "Minuman", "Harga", "Jumlah", "Subtotal");
-
         for (int i = 0; i < 5; i++) {
             if (jumlah[i] > 0) {
                 int idx = cariIndeks(kode[i]);
 
-                String nama = menu[idx][1];
                 int harga = hargaMenu[idx];
 
                 int totalJenis = harga * jumlah[i];
@@ -216,15 +244,15 @@ public class KohisopVIKS {
                 double subtotal = totalJenis + nilaiPajak;
 
                 totalIDR = totalIDR + subtotal;
-
-                System.out.printf("%-6s %-38s Rp%-6d %-8d Rp%.2f\n", kode[i], nama, harga, jumlah[i], subtotal);
             }
         }
+
         double totalBayar = konversiMataUang(totalIDR, mataUang);
 
-        System.out.println("\nRINGKASAN PEMBAYARAN");
-        System.out.printf("Total Tagihan (IDR)      : Rp%.2f Ribu\n", totalIDR);
-        System.out.println("Mata Uang Pembayaran     : " + mataUang.toUpperCase());
-        System.out.printf("Total Yang Harus Dibayar : %.2f %s\n", totalBayar, mataUang.toUpperCase());
+        System.out.printf("%-28s%20s\n", "Mata Uang", mataUang.toUpperCase());
+        System.out.printf("%-28s%20s\n", "Total Bayar", String.format("%.2f", totalBayar) + " " + mataUang.toUpperCase());
+        System.out.println("================================================");
+        System.out.println("                  TERIMA KASIH");
+        System.out.println("================================================");
     }
 }
