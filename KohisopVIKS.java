@@ -13,6 +13,7 @@ public class KohisopVIKS {
         {"B2", "Vanilla Sweet Cream Cold Brew"},
         {"B3", "Cold Brew"}
     };
+
     static int[] hargaMenu = {46, 46, 55, 59, 37, 55, 50, 23, 50, 44};
 
     public static void main(String[] args) {
@@ -34,35 +35,41 @@ public class KohisopVIKS {
 
             if (mataUang.equalsIgnoreCase("IDR") == true) {
                 break;
-            } else if(mataUang.equalsIgnoreCase("USD") == true) {
+            } else if (mataUang.equalsIgnoreCase("USD") == true) {
                 break;
-            } else if(mataUang.equalsIgnoreCase("JPY") == true) {
+            } else if (mataUang.equalsIgnoreCase("JPY") == true) {
                 break;
-            } else if(mataUang.equalsIgnoreCase("MYR") == true) {
+            } else if (mataUang.equalsIgnoreCase("MYR") == true) {
                 break;
-            } else if(mataUang.equalsIgnoreCase("EUR") == true) {
+            } else if (mataUang.equalsIgnoreCase("EUR") == true) {
                 break;
             } else {
                 System.out.println("Mata uang tidak Valid!");
             }
         }
+
         DetailPajak(kode, jumlah, mataUang);
 
         sc.close();
     }
 
     static void Menu() {
-        System.out.println("------------------DAFTAR MENU KOHISOP------------------");
-        System.out.printf("%-6s %-36s %-10s\n", "Kode", "Menu Minuman", "Harga (Rp)");
+        System.out.println("===================================================");
+        System.out.println("                DAFTAR MENU KOHISOP");
+        System.out.println("===================================================");
+        System.out.printf("%-6s %-33s %s\n", "Kode", "Menu Minuman", "Harga (Rp)");
+        System.out.println("---------------------------------------------------");
 
         for (int i = 0; i < menu.length; i++) {
-            System.out.printf("%-6s %-40s %d\n", menu[i][0], menu[i][1], hargaMenu[i]);
+            System.out.printf("%-6s %-33s %d\n", menu[i][0], menu[i][1], hargaMenu[i]);
         }
+
+        System.out.println("===================================================");
     }
 
     static void EntryPesan(String[] kode, int[] jumlah, Scanner sc) {
-
         int pesananKe = 0;
+
         while (pesananKe < 5) {
             System.out.print("\nMasukkan kode minuman: ");
             String inputKode = sc.nextLine();
@@ -78,16 +85,23 @@ public class KohisopVIKS {
             }
 
             int inputJumlah;
+
             while (true) {
                 System.out.print("Masukkan jumlah (1-3 atau 0/s untuk selesai): ");
 
-                if (sc.hasNextInt() == true) {
-                    inputJumlah = sc.nextInt();
-                    sc.nextLine();
+                String temp = sc.nextLine();
+
+                if (temp.equalsIgnoreCase("s") == true) {
+                    inputJumlah = 0;
                 } else {
-                    String temp = sc.nextLine();
-                    if (temp.equalsIgnoreCase("s") == true) {
+                    if (temp.equals("0") == true) {
                         inputJumlah = 0;
+                    } else if (temp.equals("1") == true) {
+                        inputJumlah = 1;
+                    } else if (temp.equals("2") == true) {
+                        inputJumlah = 2;
+                    } else if (temp.equals("3") == true) {
+                        inputJumlah = 3;
                     } else {
                         inputJumlah = -1;
                     }
@@ -105,7 +119,7 @@ public class KohisopVIKS {
                 continue;
             }
 
-            kode[pesananKe] = inputKode.toUpperCase();
+            kode[pesananKe] = inputKode;
             jumlah[pesananKe] = inputJumlah;
 
             pesananKe++;
@@ -127,6 +141,7 @@ public class KohisopVIKS {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -138,6 +153,7 @@ public class KohisopVIKS {
                 }
             }
         }
+
         return false;
     }
 
@@ -147,6 +163,7 @@ public class KohisopVIKS {
                 return i;
             }
         }
+
         return -1;
     }
 
@@ -156,7 +173,7 @@ public class KohisopVIKS {
 
         System.out.println("\n================================================");
         System.out.println("                    KOHISOP");
-        System.out.println("                STRUK PEMESANAN");
+        System.out.println("                STRUK PEMBAYARAN");
         System.out.println("================================================");
 
         for (int i = 0; i < 5; i++) {
@@ -170,6 +187,7 @@ public class KohisopVIKS {
                 double nilaiPajak = hitungPajak(harga, jumlah[i]);
 
                 int persen = 0;
+
                 if (harga < 50) {
                     persen = 0;
                 } else if (harga <= 55) {
@@ -181,21 +199,39 @@ public class KohisopVIKS {
                 totalTanpaPajak = totalTanpaPajak + totalJenis;
                 totalDenganPajak = totalDenganPajak + totalJenis + nilaiPajak;
 
-                String kiri1 = "    " + jumlah[i] + " x Rp" + String.format("%.2f", (double) harga);
-                String kanan1 = "Rp" + String.format("%.2f", (double) totalJenis);
-                String kiri2 = "    Pajak " + persen + "%";
-                String kanan2 = "Rp" + String.format("%.2f", nilaiPajak);
-
-                System.out.println(kode[i] + "   " + nama);
-                System.out.printf("%-28s%20s\n", kiri1, kanan1);
-                System.out.printf("%-28s%20s\n", kiri2, kanan2);
+                System.out.println(kode[i].toUpperCase() + "  " + nama);
+                System.out.printf("    %-24s%20s\n", jumlah[i] + " x Rp" + formatRupiah(harga * 1000), "Rp" + formatRupiah(totalJenis * 1000));
+                System.out.printf("    %-24s%20s\n", "Pajak " + persen + "%", "Rp" + formatRupiah((int)(nilaiPajak * 1000)));
             }
         }
 
         System.out.println("------------------------------------------------");
-        System.out.printf("%-28s%20s\n", "Total Tanpa Pajak", "Rp" + String.format("%.2f", totalTanpaPajak));
-        System.out.printf("%-28s%20s\n", "Total Dengan Pajak", "Rp" + String.format("%.2f", totalDenganPajak));
-        System.out.println("------------------------------------------------");
+        System.out.printf("%-28s%20s\n", "Total tanpa pajak", "Rp" + formatRupiah((int)(totalTanpaPajak * 1000)));
+        System.out.printf("%-28s%20s\n", "Total pajak", "Rp" + formatRupiah((int)Math.round((totalDenganPajak - totalTanpaPajak) * 1000)));
+        System.out.printf("%-28s%20s\n", "Total dengan pajak", "Rp" + formatRupiah((int)Math.round(totalDenganPajak * 1000)));
+        System.out.println("================================================");
+    }
+
+    static String formatRupiah(int angka) {
+        String hasil = "";
+        int hitung = 0;
+
+        if (angka == 0) {
+            return "0";
+        }
+
+        while (angka > 0) {
+            if (hitung == 3) {
+                hasil = "." + hasil;
+                hitung = 0;
+            }
+
+            hasil = (angka % 10) + hasil;
+            angka = angka / 10;
+            hitung++;
+        }
+
+        return hasil;
     }
 
     static double hitungPajak(int harga, int jumlah) {
@@ -209,6 +245,7 @@ public class KohisopVIKS {
         } else {
             totalPajak = (totalHarga * 11) / 100.0;
         }
+
         return totalPajak;
     }
 
@@ -226,6 +263,7 @@ public class KohisopVIKS {
         } else {
             hasil = totalIDR;
         }
+
         return hasil;
     }
 
@@ -237,7 +275,6 @@ public class KohisopVIKS {
                 int idx = cariIndeks(kode[i]);
 
                 int harga = hargaMenu[idx];
-
                 int totalJenis = harga * jumlah[i];
 
                 double nilaiPajak = hitungPajak(harga, jumlah[i]);
@@ -249,10 +286,11 @@ public class KohisopVIKS {
 
         double totalBayar = konversiMataUang(totalIDR, mataUang);
 
-        System.out.printf("%-28s%20s\n", "Mata Uang", mataUang.toUpperCase());
-        System.out.printf("%-28s%20s\n", "Total Bayar", String.format("%.2f", totalBayar) + " " + mataUang.toUpperCase());
+        System.out.printf("%-28s%20s\n", "Mata uang", mataUang.toUpperCase());
+        System.out.printf("%-28s%20s\n", "TOTAL BAYAR", String.format(java.util.Locale.US, "%.2f", totalBayar) + " " + mataUang.toUpperCase());
         System.out.println("================================================");
         System.out.println("                  TERIMA KASIH");
+        System.out.println("             SILAKAN DATANG KEMBALI");
         System.out.println("================================================");
     }
 }
